@@ -1,1 +1,2 @@
-
+For mortality prediction, run mp.py
+For LOS prediction, run los.py
