@@ -89,7 +89,7 @@ training_args = TrainingArguments(
     learning_rate=2e-5,
     per_device_train_batch_size=16,
     per_device_eval_batch_size=16,
-    num_train_epochs=0.1,#3,
+    num_train_epochs=3,
     weight_decay=0.01,
     logging_dir="./logs",
     logging_steps=10,
@@ -180,7 +180,7 @@ class GCNClassifier(nn.Module):
         return x
 
 # --- Prepare for training ---
-model = GCNClassifier(in_channels=X_train.shape[1], hidden_channels=8, num_classes=2).to(device)
+model = GCNClassifier(in_channels=X_train.shape[1], hidden_channels=64, num_classes=2).to(device)
 
 class_weights = compute_class_weight(class_weight='balanced', classes=np.unique(y_train.cpu()), y=y_train.cpu().numpy())
 class_weights = torch.tensor(class_weights, dtype=torch.float32).to(device)
