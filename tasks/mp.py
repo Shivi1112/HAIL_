@@ -21,13 +21,13 @@ from datasets import Dataset
 from transformers import BertTokenizer, BertForSequenceClassification, Trainer, TrainingArguments
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 import os
-train_path = "MP_IN_adm_train.csv"#../aa_nic/text.csv"
+train_path = "MP_IN_adm_train.csv"
 val_path = "MP_IN_adm_val.csv"
 test_path = "MP_IN_adm_test.csv"
 
-train_df = pd.read_csv(train_path,nrows=500)
-val_df= pd.read_csv(val_path,nrows=200)
-test_df = pd.read_csv(test_path,nrows=200)
+train_df = pd.read_csv(train_path)
+val_df= pd.read_csv(val_path)
+test_df = pd.read_csv(test_path)
 
 # --- Data Cleaning and Preparation ---
 
