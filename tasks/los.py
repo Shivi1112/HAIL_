@@ -15,8 +15,9 @@ from sklearn.metrics import accuracy_score, roc_auc_score, f1_score
 from torch_geometric.data import Data, DataLoader
 from torch_geometric.nn import GCNConv
 from sklearn.model_selection import train_test_split
+import os
 
-train_path = "LOS_WEEKS_adm_train.csv"#../aa_nic/text.csv"
+train_path = "LOS_WEEKS_adm_train.csv"
 val_path = "LOS_WEEKS_adm_val.csv"
 test_path = "LOS_WEEKS_adm_test.csv"
 
@@ -24,7 +25,7 @@ train_df = pd.read_csv(train_path)
 val_df= pd.read_csv(val_path)
 test_df = pd.read_csv(test_path)
 
-device = torch.device("cuda:2" if torch.cuda.is_available() else "cpu")
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 print(device)
 
 # --- Data Cleaning and Preparation ---
@@ -43,8 +44,6 @@ test_df = test_df[test_df['label'].astype(str).isin(['0', '1','2','3'])]
 train_df['label'] = train_df['label'].astype(int)
 val_df['label'] = val_df['label'].astype(int)
 test_df['label'] = test_df['label'].astype(int)
-
-
 
 
 # --- Hugging Face Dataset and Tokenization ---
@@ -119,6 +118,13 @@ trainer = Trainer(
 )
 
 trainer.train()
+# Save the best BERT model and tokenizer
+model_dir = './saved_los_models'
+os.makedirs(model_dir, exist_ok=True)
+model.save_pretrained(model_dir)
+
+# Save tokenizer
+tokenizer.save_pretrained(model_dir)
 results = trainer.evaluate(eval_dataset=test_dataset)
 
 
@@ -219,6 +225,16 @@ for epoch in range(50):
         if counter >= patience:
             print("Early stopping triggered.")
             break
+            
+    
+# torch.save(best_model_state, "los_model.pth")
+# Save GCN model state dict
+torch.save(best_model_state, os.path.join(model_dir, 'gcn_model.pth'))
+
+# Save class weights if needed
+torch.save(class_weights, os.path.join(model_dir, 'class_weights.pt'))
+
+print(f"Models and tokenizer saved in {model_dir}")
 
 model.load_state_dict(best_model_state)
 
